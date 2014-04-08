@@ -2,8 +2,6 @@ from scipy import linspace, polyval, polyfit, sqrt, stats, randn
 from numpy.linalg import lstsq
 from pylab import plot, title, show , legend
 import csv
-import numpy as np
-import statsmodels.api as sm
 from sklearn import linear_model
 """
 datafile = open('communities.data', 'r')
