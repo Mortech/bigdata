@@ -1,7 +1,10 @@
 from scipy import linspace, polyval, polyfit, sqrt, stats, randn
-from scipy.linalg import lstsq
+from numpy.linalg import lstsq
 from pylab import plot, title, show , legend
 import csv
+import numpy as np
+import statsmodels.api as sm
+from sklearn import linear_model
 """
 datafile = open('communities.data', 'r')
 data = csv.reader(datafile)
@@ -13,7 +16,7 @@ for row in data:
 
 datafile = open('explanatory.data', 'r')
 data = csv.reader(datafile)
-writefile = open('nomissing.data', 'w')
+writefile = open('nomissingbyrow.data', 'w')
 writer = csv.writer(writefile)
 for row in data:
     write = True
@@ -22,7 +25,6 @@ for row in data:
             write = False
     if write:
         writer.writerow(row)
-"""
 
 datafile = open('explanatory.data', 'r')
 datacsv = csv.reader(datafile)
@@ -48,56 +50,20 @@ for row in data:
 
 
 """
-datafile = open('nomissing.data', 'r')
+datafile = open('nomissingbycol.data', 'r')
 datacsv = csv.reader(datafile)
 data = []
 val = []
+firstval = []
 for row in datacsv:
-    data.append(row[:-1])
-    val.append(row[-1])
-
-ret = lstsq(data, val)
-
-print ret
-"""
-
-
-"""
-#Linear regression example
-# This is a very simple example of using two scipy tools 
-# for linear regression, polyfit and stats.linregress
-
-#Sample data creation
-#number of points 
-n=50
-t=linspace(-5,5,n)
-#parameters
-a=0.8
-b=-4
-x=polyval([a,b],t)
-#add some noise
-xn=x+randn(n)
-
-#Linear regressison -polyfit - polyfit can be used other orders polys
-(ar,br)=polyfit(t,xn,1)
-xr=polyval([ar,br],t)
-#compute the mean square error
-err=sqrt(sum((xr-xn)**2)/n)
-
-print('Linear regression using polyfit')
-print('parameters: a=%.2f b=%.2f \nregression: a=%.2f b=%.2f, ms error= %.3f' % (a,b,ar,br,err))
-
+    data.append([float(i) for i in row[:-1]])
+    val.append(float(row[-1]))
+    firstval.append(float(row[0]))
+clf = linear_model.LinearRegression()
+clf.fit(data, val)
+print('Coefficients: \n', clf.coef_)
 #matplotlib ploting
-title('Linear Regression Example')
-plot(t,x,'g.--')
-plot(t,xn,'k.')
-plot(t,xr,'r.-')
-legend(['original','plus noise', 'regression'])
+title('Residuals')
+plot(val,[clf.predict(data[i])- val[i] for i in range(len(data))], 'o')
 
 show()
-
-#Linear regression using stats.linregress
-(a_s,b_s,r,tt,stderr)=stats.linregress(t,xn)
-print('Linear regression using stats.linregress')
-print('parameters: a=%.2f b=%.2f \nregression: a=%.2f b=%.2f, std error= %.3f' % (a,b,a_s,b_s,stderr))
-"""
