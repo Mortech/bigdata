@@ -1,4 +1,5 @@
 from scipy import linspace, polyval, polyfit, sqrt, stats, randn
+from scipy.linalg import lstsq
 from pylab import plot, title, show , legend
 import csv
 """
@@ -21,6 +22,43 @@ for row in data:
             write = False
     if write:
         writer.writerow(row)
+"""
+
+datafile = open('explanatory.data', 'r')
+datacsv = csv.reader(datafile)
+writefile = open('nomissingbycol.data', 'w')
+writer = csv.writer(writefile)
+data = []
+stuff = None
+for row in datacsv:
+    data.append(row)
+    if stuff is None:
+        stuff = [i for i in range(len(row))]
+    for i in range(len(row)):
+        if row[i] is '?':
+            stuff[i] = -1
+for row in data:
+    newdat = []
+    for i in stuff:
+        if stuff is not -1:
+            newdat.append(row[i])
+    writer.writerow(newdat)
+
+
+
+
+"""
+datafile = open('nomissing.data', 'r')
+datacsv = csv.reader(datafile)
+data = []
+val = []
+for row in datacsv:
+    data.append(row[:-1])
+    val.append(row[-1])
+
+ret = lstsq(data, val)
+
+print ret
 """
 
 
