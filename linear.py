@@ -1,6 +1,7 @@
 from scipy import linspace, polyval, polyfit, sqrt, stats, randn
 from numpy.linalg import lstsq
 from pylab import plot, title, show , legend
+import matplotlib.pyplot as plt
 import csv
 from sklearn import linear_model
 """
@@ -24,6 +25,7 @@ for row in data:
     if write:
         writer.writerow(row)
 
+
 datafile = open('explanatory.data', 'r')
 datacsv = csv.reader(datafile)
 writefile = open('nomissingbycol.data', 'w')
@@ -35,12 +37,12 @@ for row in datacsv:
     if stuff is None:
         stuff = [i for i in range(len(row))]
     for i in range(len(row)):
-        if row[i] is '?':
+        if row[i] == '?':
             stuff[i] = -1
 for row in data:
     newdat = []
     for i in stuff:
-        if stuff is not -1:
+        if i != -1:
             newdat.append(row[i])
     writer.writerow(newdat)
 
@@ -54,14 +56,14 @@ data = []
 val = []
 firstval = []
 for row in datacsv:
-    data.append([float(i) for i in row[:-1]])
-    val.append(float(row[-1]))
+    data.append([float(row[i]) for i in range(len(row)-1)])
+    val.append(float(row[len(row)-1]))
     firstval.append(float(row[0]))
 clf = linear_model.LinearRegression()
 clf.fit(data, val)
 print('Coefficients: \n', clf.coef_)
 #matplotlib ploting
 title('Residuals')
-plot(val,[clf.predict(data[i])- val[i] for i in range(len(data))], 'o')
+plot(val,[val[i] - clf.predict(data[i]) for i in range(len(data))], 'o')
 
 show()
