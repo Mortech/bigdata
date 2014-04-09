@@ -50,7 +50,8 @@ for row in data:
 
 
 """
-datafile = open('nomissingbycol.data', 'r')
+# datafile = open('nomissingbycol.data', 'r')
+datafile = open('imputed.data', 'r')
 datacsv = csv.reader(datafile)
 data = []
 val = []

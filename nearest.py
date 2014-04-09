@@ -4,7 +4,7 @@ from pylab import plot, title, show , legend
 import csv
 from numpy import argsort,sqrt
 import numpy as np
-
+from sklearn import neighbors, datasets
 
 
 def knn_search(x, D, K):
@@ -19,7 +19,8 @@ def knn_search(x, D, K):
 
 
 
-datafile = open('nomissingbycol.data', 'r')
+# datafile = open('nomissingbycol.data', 'r')
+datafile = open('imputed.data', 'r')
 datacsv = csv.reader(datafile)
 data = []
 val = []
@@ -33,16 +34,29 @@ residuals = []
 
 for i in range(len(data)):
 	datacpy = data[:]
-	datacpy.remove(data[i])
+	datacpy.pop(i)
 
-	knn = knn_search(np.array(data[i], ndmin=2), np.array(datacpy), 1)
+	# knn = knn_search(np.array(data[i], ndmin=2), np.array(datacpy), 1)
 
-	print(knn)
+	# print(knn)
 
-	neighbor = knn[0]
+	# neighbor = knn[0]
 
 	# print(neighbor)
-	prediction = val[neighbor]
+	clf = neighbors.KNeighborsClassifier(3, weights="distance")
+
+	valcpy = val[:]
+	valcpy.pop(i)
+	# clf.fit(np.array(datacpy), np.array(val[:i-1].extend(val[i+1:])))
+	clf.fit(np.array(datacpy), np.array(valcpy))
+
+
+
+
+	# prediction = val[neighbor]
+
+	prediction = clf.predict(np.array(data[i]))
+
 
 	error = prediction - val[i]
 
